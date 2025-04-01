@@ -1,0 +1,8 @@
+fastapi
+shodan
+uvicorn
+pydantic
+httpx
+geopy
+python-dotenv
+jinja2
