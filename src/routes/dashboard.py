@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from src.shodan_client import ShodanClient
 from src.utils.geo_mapper import map_devices
+from src.utils.banner_parser import get_device_banners
+from src.utils.exploit_finder import enrich_vulnerability_data
 from src.models.risk import Risk
 import os
 import requests
@@ -14,6 +16,120 @@ router = APIRouter()
 shodan_client = ShodanClient(api_key=os.getenv("SHODAN_API_KEY"))
 
 
+
+@router.post("/scan")
+async def request_scan(ip_address: str):
+    """Request Shodan to scan a specific IP address"""
+    try:
+        result = shodan_client.scan_ip(ip_address)
+        return {
+            "status": "success",
+            "message": f"Scan requested for {ip_address}",
+            "details": result
+        }
+    except Exception as e:
+        print(f"Error requesting scan: {str(e)}")
+        return {
+            "status": "error",
+            "message": f"Failed to request scan: {str(e)}"
+        }
+
+@router.get("/domain/{domain}")
+async def get_domain_info(domain: str):
+    """Get information about a domain from Shodan"""
+    try:
+        domain_info = shodan_client.get_domain_info(domain)
+        return {
+            "status": "success",
+            "domain": domain,
+            "info": domain_info
+        }
+    except Exception as e:
+        print(f"Error getting domain info: {str(e)}")
+        return {
+            "status": "error",
+            "message": f"Failed to retrieve domain information: {str(e)}"
+        }
+
+@router.get("/alerts")
+async def list_network_alerts():
+    """List all configured network alerts"""
+    try:
+        alerts = shodan_client.list_alerts()
+        return {
+            "status": "success",
+            "alerts": alerts
+        }
+    except Exception as e:
+        print(f"Error listing alerts: {str(e)}")
+        return {
+            "status": "error",
+            "message": f"Failed to list alerts: {str(e)}"
+        }
+
+@router.post("/alerts")
+async def create_network_alert(name: str, network: str, triggers: str = None):
+    """Create a new network alert
+    
+    Args:
+        name: Name of the alert
+        network: Network range in CIDR notation (e.g., "192.168.1.0/24")
+        triggers: Comma-separated list of trigger names (optional)
+    """
+    try:
+        # Parse triggers if provided
+        trigger_list = None
+        if triggers:
+            trigger_list = [t.strip() for t in triggers.split(",")]
+            
+        result = shodan_client.create_network_alert(name, network, trigger_list)
+        return {
+            "status": "success",
+            "message": f"Alert '{name}' created for network {network}",
+            "alert": result
+        }
+    except Exception as e:
+        print(f"Error creating alert: {str(e)}")
+        return {
+            "status": "error",
+            "message": f"Failed to create alert: {str(e)}"
+        }
+
+@router.get("/exposure/{domain}")
+async def get_exposure_report(domain: str):
+    """Get an internet exposure report for an organization domain"""
+    try:
+        report = shodan_client.get_exposure_report(domain)
+        return {
+            "status": "success",
+            "domain": domain,
+            "report": report
+        }
+    except Exception as e:
+        print(f"Error generating exposure report: {str(e)}")
+        return {
+            "status": "error",
+            "message": f"Failed to generate exposure report: {str(e)}"
+        }
+
+@router.post("/toggle-demo")
+async def toggle_demo_mode(enable: bool = True):
+    """Toggle demo mode for testing without a valid API key"""
+    try:
+        # Set demo mode on the shodan client instance
+        shodan_client.demo_mode = enable
+        
+        return {
+            "status": "success",
+            "message": f"Demo mode {'enabled' if enable else 'disabled'}",
+            "demo_mode": enable
+        }
+    except Exception as e:
+        print(f"Error toggling demo mode: {str(e)}")
+        return {
+            "status": "error",
+            "message": f"Failed to toggle demo mode: {str(e)}"
+        }
 
 @router.get("/devices")
 async def get_devices(ip_range: str):
@@ -53,16 +169,23 @@ async def get_devices(ip_range: str):
                     vuln_dict = vuln_info.copy() if isinstance(vuln_info, dict) else {'description': str(vuln_info)}
                     vuln_dict['id'] = cve_id
                     vulns_list.append(vuln_dict)
+                
+                # Enrich vulnerabilities with exploit data
+                vulns_list = enrich_vulnerability_data(vulns_list)
                 vulns = vulns_list
+            
+            # Extract banners
+            banners = get_device_banners(host_info=device)
             
             risk = Risk(device_id=device.get("id", device.get("ip_str", "unknown")), 
                       risk_score=0, vulnerabilities=vulns, ports=ports)
             risk_score = risk.calculate_risk_score()
             
-            # Add OS and services to risk model
+            # Add OS, services and banners to risk model
             risk_data = risk.__repr__()
             risk_data["os"] = device.get("os", "Unknown")
             risk_data["services"] = services
+            risk_data["banners"] = banners
             risks.append(risk_data)
             
             # Enable alert for high-risk devices

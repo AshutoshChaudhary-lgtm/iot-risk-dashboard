@@ -1,0 +1,91 @@
+# Python bytecode and artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+pytestdebug.log
+
+# Virtual environments
+venv*/
+env/
+ENV/
+.env
+.venv
+__pypackages__/
+
+# Environment variables - Do not commit secrets
+*.env
+.env.*
+key.env
+api_keys.txt
+credentials.json
+
+# IDE configuration
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Log files
+*.log
+logs/
+log/
+
+# Database files
+*.sqlite3
+*.db
+*.db-journal*
+
+# Demo/Testing data
+demo_data/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# mypy cache
+.mypy_cache/
+.dmypy.json
+dmypy.json

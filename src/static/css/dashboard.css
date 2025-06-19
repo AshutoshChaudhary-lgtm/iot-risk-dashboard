@@ -1,0 +1,101 @@
+/* IoT Risk Dashboard Styles */
+
+body {
+  background-color: #f4f7f6; /* Light gray background for the body */
+  padding-top: 56px; /* Adjust body padding if using fixed-top navbar */
+}
+
+#map {
+  height: 400px;
+  margin-bottom: 30px;
+  border-radius: 0.25rem; /* Add rounded corners to map */
+  border: 1px solid #dee2e6; /* Add a light border */
+}
+
+.risk-badge {
+  font-size: 1em;
+}
+
+.detail-row {
+  display: none;
+  background-color: #f8f9fa;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.device-detail {
+  padding: 15px;
+  background-color: #ffffff; /* White background for detail content */
+  border-top: 1px solid #dee2e6;
+}
+
+.vulnerability-item {
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #eee; /* Lighter border for vuln items */
+}
+
+.vulnerability-critical {
+  background-color: #ffebee; /* Light red */
+  border-left: 5px solid #dc3545; /* Red accent */
+}
+
+.vulnerability-high {
+  background-color: #fff3e0; /* Light orange */
+  border-left: 5px solid #fd7e14; /* Orange accent */
+}
+
+.vulnerability-medium {
+  background-color: #e8f5e9; /* Light green */
+  border-left: 5px solid #28a745; /* Green accent */
+}
+
+.vulnerability-low {
+  background-color: #e3f2fd; /* Light blue */
+  border-left: 5px solid #0dcaf0; /* Blue accent */
+}
+
+.navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,.1); /* Add subtle shadow to navbar */
+}
+
+.card {
+  margin-bottom: 1.5rem; /* Add some space below cards */
+}
+
+.section-card { /* New class for main content sections */
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+.nav-tabs .nav-link {
+  color: #495057; /* Darker text for inactive tabs */
+}
+
+.nav-tabs .nav-link.active {
+  color: #007bff; /* Bootstrap primary blue for active tab */
+  background-color: #fff;
+  border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.tab-content {
+  background-color: #fff; /* White background for tab content */
+  border: 1px solid #dee2e6;
+  border-top: 0;
+  padding: 1.5rem;
+  border-radius: 0 0 0.25rem 0.25rem; /* Rounded bottom corners */
+}
+
+h1, h2, h5 {
+  color: #343a40; /* Darker headings */
+}
+
+.table-hover tbody tr:hover {
+  background-color: #e9ecef; /* Lighter hover for tables */
+}
